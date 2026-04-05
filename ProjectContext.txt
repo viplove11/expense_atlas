@@ -1,0 +1,27 @@
+I want to design a full-stack trip expense planner application using Next.js and MongoDB.
+
+The app should include:
+
+1. User authentication (register/login)
+2. Dashboard showing trips and analytics
+3. Ability to create a trip with date range
+4. Expense categories like food, hotel, travel, activities, and custom categories
+5. Planned vs actual expense tracking
+6. Analytics including:
+   - Difference between planned and actual
+   - Percentage increase/decrease
+   - Category-wise breakdown
+   - Daily expense tracking
+
+Design:
+- Clean modern UI
+- Use charts (bar + pie)
+- Responsive layout
+- Minimal color palette
+
+Also generate:
+- MongoDB schema design
+- API routes structure
+- Component structure for Next.js (App Router)
+
+Make it scalable like a SaaS product.
