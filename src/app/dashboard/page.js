@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Plus, MapPin, Calendar, DollarSign } from 'lucide-react';
+import { Plus, MapPin, Calendar, IndianRupee } from 'lucide-react';
 
 function getDateKey(value) {
   return new Date(value).toISOString().split('T')[0];
@@ -168,11 +168,11 @@ export default function Dashboard() {
           </div>
           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-md border border-white">
             <div className="flex items-center">
-              <DollarSign className="h-8 w-8 text-green-600" />
+              <IndianRupee className="h-8 w-8 text-green-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Budget</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${trips.reduce((sum, trip) => sum + trip.totalPlannedBudget, 0).toFixed(2)}
+                  Rs {trips.reduce((sum, trip) => sum + trip.totalPlannedBudget, 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -221,16 +221,16 @@ export default function Dashboard() {
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3">
                         <div className="rounded-lg bg-slate-100 px-3 py-2">
                           <p className="text-xs text-slate-500">Planned</p>
-                          <p className="text-sm font-semibold text-slate-800">${trip.totalPlannedBudget.toFixed(2)}</p>
+                          <p className="text-sm font-semibold text-slate-800">Rs {trip.totalPlannedBudget.toFixed(2)}</p>
                         </div>
                         <div className="rounded-lg bg-slate-100 px-3 py-2">
                           <p className="text-xs text-slate-500">Spent</p>
-                          <p className="text-sm font-semibold text-slate-800">${trip.totalActualSpent.toFixed(2)}</p>
+                          <p className="text-sm font-semibold text-slate-800">Rs {trip.totalActualSpent.toFixed(2)}</p>
                         </div>
                         <div className="rounded-lg bg-slate-100 px-3 py-2">
                           <p className="text-xs text-slate-500">Difference</p>
                           <p className={`text-sm font-semibold ${(trip.totalActualSpent - trip.totalPlannedBudget) > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                            ${Math.abs(trip.totalActualSpent - trip.totalPlannedBudget).toFixed(2)} {(trip.totalActualSpent - trip.totalPlannedBudget) > 0 ? 'High' : 'Low'}
+                            Rs {Math.abs(trip.totalActualSpent - trip.totalPlannedBudget).toFixed(2)} {(trip.totalActualSpent - trip.totalPlannedBudget) > 0 ? 'High' : 'Low'}
                           </p>
                         </div>
                       </div>
@@ -305,16 +305,16 @@ export default function Dashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <p className="text-sm text-slate-200">Planned</p>
-                      <p className="text-2xl font-bold">${selectedDateTotals.planned.toFixed(2)}</p>
+                      <p className="text-2xl font-bold">Rs {selectedDateTotals.planned.toFixed(2)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-slate-200">Actual</p>
-                      <p className="text-2xl font-bold">${selectedDateTotals.actual.toFixed(2)}</p>
+                      <p className="text-2xl font-bold">Rs {selectedDateTotals.actual.toFixed(2)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-slate-200">Difference</p>
                       <p className={`text-2xl font-bold ${selectedDateDiff > 0 ? 'text-red-300' : selectedDateDiff < 0 ? 'text-emerald-300' : 'text-white'}`}>
-                        ${Math.abs(selectedDateDiff).toFixed(2)} {selectedDateDiff > 0 ? 'High' : selectedDateDiff < 0 ? 'Low' : 'On Track'}
+                        Rs {Math.abs(selectedDateDiff).toFixed(2)} {selectedDateDiff > 0 ? 'High' : selectedDateDiff < 0 ? 'Low' : 'On Track'}
                       </p>
                     </div>
                   </div>
@@ -341,7 +341,7 @@ export default function Dashboard() {
                         return (
                           <tr key={expense._id}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{expense.category}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${planned.toFixed(2)}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Rs {planned.toFixed(2)}</td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <input
                                 type="number"
@@ -354,7 +354,7 @@ export default function Dashboard() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               <span className={diff > 0 ? 'text-red-700' : diff < 0 ? 'text-green-700' : 'text-gray-700'}>
-                                ${Math.abs(diff).toFixed(2)} {label}
+                                Rs {Math.abs(diff).toFixed(2)} {label}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">

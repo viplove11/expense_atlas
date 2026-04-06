@@ -210,7 +210,7 @@ export default function NewTrip() {
             <div>
               <div className="bg-gradient-to-r from-blue-600 to-cyan-500 border border-blue-500 rounded-xl p-5 shadow-lg">
                 <p className="text-sm text-blue-100 font-medium">Total Planned Budget</p>
-                <p className="text-3xl font-bold text-white">${totalPlannedBudget.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-white">Rs {totalPlannedBudget.toFixed(2)}</p>
                 <p className="text-xs text-blue-100 mt-1">Calculated from day-wise category amounts below.</p>
               </div>
             </div>

@@ -121,18 +121,18 @@ export default function TripDetail() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg">
               <p className="text-sm text-blue-600 font-medium">Planned Budget</p>
-              <p className="text-2xl font-bold text-blue-900">${trip.totalPlannedBudget.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-blue-900">Rs {trip.totalPlannedBudget.toFixed(2)}</p>
             </div>
             <div className="bg-green-50 p-4 rounded-lg">
               <p className="text-sm text-green-600 font-medium">Actual Spent</p>
-              <p className="text-2xl font-bold text-green-900">${trip.totalActualSpent.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-green-900">Rs {trip.totalActualSpent.toFixed(2)}</p>
             </div>
             <div className={`p-4 rounded-lg ${analytics?.difference >= 0 ? 'bg-red-50' : 'bg-green-50'}`}>
               <p className={`text-sm font-medium ${analytics?.difference >= 0 ? 'text-red-600' : 'text-green-600'}`}>
                 Difference
               </p>
               <p className={`text-2xl font-bold ${analytics?.difference >= 0 ? 'text-red-900' : 'text-green-900'}`}>
-                ${analytics?.difference?.toFixed(2) || '0.00'}
+                Rs {analytics?.difference?.toFixed(2) || '0.00'}
               </p>
             </div>
           </div>
@@ -275,8 +275,8 @@ export default function TripDetail() {
                       <p className="text-sm text-gray-500">{new Date(expense.date).toLocaleDateString()}</p>
                     </div>
                     <div className="sm:text-right">
-                      <p className="text-sm text-gray-600">Planned: ${expense.plannedAmount.toFixed(2)}</p>
-                      <p className="font-medium text-gray-900">Actual: ${expense.actualAmount.toFixed(2)}</p>
+                      <p className="text-sm text-gray-600">Planned: Rs {expense.plannedAmount.toFixed(2)}</p>
+                      <p className="font-medium text-gray-900">Actual: Rs {expense.actualAmount.toFixed(2)}</p>
                     </div>
                   </div>
                 </div>
