@@ -146,7 +146,7 @@ export default function NewTrip() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#dbeafe,_#f8fafc_45%,_#e2e8f0)]">
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
         <div className="mb-8">
           <Link href="/dashboard" className="inline-flex items-center text-blue-700 hover:text-blue-600 font-medium">
             <ArrowLeft className="h-5 w-5 mr-2" />
