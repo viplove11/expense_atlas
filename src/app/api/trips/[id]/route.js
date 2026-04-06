@@ -7,12 +7,13 @@ export async function GET(request, { params }) {
   try {
     const session = await auth();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { id } = await params;
 
     const client = await clientPromise;
     const db = client.db();
 
     const trip = await db.collection('trips').findOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
       userId: session.user.id
     });
 
@@ -28,6 +29,7 @@ export async function PUT(request, { params }) {
   try {
     const session = await auth();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { id } = await params;
 
     const data = await request.json();
 
@@ -35,7 +37,7 @@ export async function PUT(request, { params }) {
     const db = client.db();
 
     const result = await db.collection('trips').updateOne(
-      { _id: new ObjectId(params.id), userId: session.user.id },
+      { _id: new ObjectId(id), userId: session.user.id },
       { $set: { ...data, updatedAt: new Date() } }
     );
 
@@ -51,12 +53,13 @@ export async function DELETE(request, { params }) {
   try {
     const session = await auth();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { id } = await params;
 
     const client = await clientPromise;
     const db = client.db();
 
     const result = await db.collection('trips').deleteOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
       userId: session.user.id
     });
 

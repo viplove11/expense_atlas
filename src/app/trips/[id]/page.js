@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Plus, BarChart3, PieChart } from 'lucide-react';
@@ -25,39 +25,40 @@ export default function TripDetail() {
   const router = useRouter();
   const params = useParams();
 
-  useEffect(() => {
-    if (!session) {
-      router.push('/auth/signin');
-    } else {
-      fetchTrip();
-      fetchExpenses();
-      fetchAnalytics();
-    }
-  }, [session, router]);
-
-  const fetchTrip = async () => {
+  const fetchTrip = useCallback(async () => {
     const res = await fetch(`/api/trips/${params.id}`);
     if (res.ok) {
       const data = await res.json();
       setTrip(data);
     }
-  };
+  }, [params.id]);
 
-  const fetchExpenses = async () => {
+  const fetchExpenses = useCallback(async () => {
     const res = await fetch(`/api/expenses?tripId=${params.id}`);
     if (res.ok) {
       const data = await res.json();
       setExpenses(data);
     }
-  };
+  }, [params.id]);
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     const res = await fetch(`/api/analytics/${params.id}`);
     if (res.ok) {
       const data = await res.json();
       setAnalytics(data);
     }
-  };
+  }, [params.id]);
+
+  useEffect(() => {
+    if (!session) {
+      router.push('/auth/signin');
+    } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      fetchTrip();
+      fetchExpenses();
+      fetchAnalytics();
+    }
+  }, [fetchAnalytics, fetchExpenses, fetchTrip, router, session]);
 
   const handleAddExpense = async (e) => {
     e.preventDefault();
@@ -104,7 +105,7 @@ export default function TripDetail() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="mb-8">
           <Link href="/dashboard" className="flex items-center text-blue-600 hover:text-blue-500">
             <ArrowLeft className="h-5 w-5 mr-2" />
@@ -112,8 +113,8 @@ export default function TripDetail() {
           </Link>
         </div>
 
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{trip.name}</h1>
+        <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">{trip.name}</h1>
           <p className="text-gray-600 mb-4">
             {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
           </p>
@@ -138,56 +139,59 @@ export default function TripDetail() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white shadow-md rounded-lg p-6">
+          <div className="bg-white shadow-md rounded-lg p-4 sm:p-6">
             <h2 className="text-xl font-bold mb-4 flex items-center">
               <BarChart3 className="h-5 w-5 mr-2" />
               Category Breakdown
             </h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={categoryData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="planned" fill="#8884d8" name="Planned" />
-                <Bar dataKey="actual" fill="#82ca9d" name="Actual" />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="h-64 sm:h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={categoryData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="category" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="planned" fill="#8884d8" name="Planned" />
+                  <Bar dataKey="actual" fill="#82ca9d" name="Actual" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
-          <div className="bg-white shadow-md rounded-lg p-6">
+          <div className="bg-white shadow-md rounded-lg p-4 sm:p-6">
             <h2 className="text-xl font-bold mb-4 flex items-center">
               <PieChart className="h-5 w-5 mr-2" />
               Spending by Category
             </h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <RechartsPieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </RechartsPieChart>
-            </ResponsiveContainer>
+            <div className="h-64 sm:h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsPieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </RechartsPieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
         <div className="bg-white shadow-md rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <h2 className="text-lg font-medium text-gray-900">Expenses</h2>
             <button
               onClick={() => setShowAddExpense(!showAddExpense)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center space-x-2"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 inline-flex items-center justify-center space-x-2 w-full sm:w-auto"
             >
               <Plus className="h-4 w-4" />
               <span>Add Expense</span>
@@ -195,7 +199,7 @@ export default function TripDetail() {
           </div>
 
           {showAddExpense && (
-            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-gray-50">
               <form onSubmit={handleAddExpense} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <input
                   type="text"
@@ -240,14 +244,14 @@ export default function TripDetail() {
                 <div className="flex space-x-2">
                   <button
                     type="submit"
-                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex-1"
                   >
                     Add
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddExpense(false)}
-                    className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+                    className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 flex-1"
                   >
                     Cancel
                   </button>
@@ -258,19 +262,19 @@ export default function TripDetail() {
 
           <div className="divide-y divide-gray-200">
             {expenses.length === 0 ? (
-              <div className="px-6 py-8 text-center text-gray-500">
+              <div className="px-4 sm:px-6 py-8 text-center text-gray-500">
                 No expenses yet. Add your first expense above.
               </div>
             ) : (
               expenses.map((expense) => (
-                <div key={expense._id} className="px-6 py-4 hover:bg-gray-50">
-                  <div className="flex justify-between items-center">
+                <div key={expense._id} className="px-4 sm:px-6 py-4 hover:bg-gray-50">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                     <div>
                       <h3 className="font-medium text-gray-900">{expense.description}</h3>
                       <p className="text-sm text-gray-600">{expense.category}</p>
                       <p className="text-sm text-gray-500">{new Date(expense.date).toLocaleDateString()}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="sm:text-right">
                       <p className="text-sm text-gray-600">Planned: ${expense.plannedAmount.toFixed(2)}</p>
                       <p className="font-medium text-gray-900">Actual: ${expense.actualAmount.toFixed(2)}</p>
                     </div>

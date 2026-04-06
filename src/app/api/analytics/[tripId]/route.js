@@ -7,18 +7,19 @@ export async function GET(request, { params }) {
   try {
     const session = await auth();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { tripId } = await params;
 
     const client = await clientPromise;
     const db = client.db();
 
     const trip = await db.collection('trips').findOne({
-      _id: new ObjectId(params.tripId),
+      _id: new ObjectId(tripId),
       userId: session.user.id
     });
 
     if (!trip) return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
 
-    const expenses = await db.collection('expenses').find({ tripId: params.tripId }).toArray();
+    const expenses = await db.collection('expenses').find({ tripId }).toArray();
 
     // Calculate analytics
     const totalPlanned = expenses.reduce((sum, exp) => sum + exp.plannedAmount, 0);
