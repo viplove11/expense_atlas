@@ -320,7 +320,57 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="md:hidden px-4 py-4 space-y-3 bg-slate-50/50">
+                  {selectedDateExpenses.map((expense) => {
+                    const planned = Number(expense.plannedAmount) || 0;
+                    const actual = Number(actualDrafts[expense._id] ?? expense.actualAmount) || 0;
+                    const diff = actual - planned;
+                    const label = getVarianceLabel(diff);
+
+                    return (
+                      <div
+                        key={expense._id}
+                        className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                      >
+                        <p className="text-sm font-semibold text-slate-900">{expense.category}</p>
+                        <div className="mt-3 grid grid-cols-2 gap-3">
+                          <div className="rounded-lg bg-slate-100 px-3 py-2">
+                            <p className="text-[11px] uppercase tracking-wide text-slate-500">Pre-calculated</p>
+                            <p className="mt-1 text-sm font-medium text-slate-800">Rs {planned.toFixed(2)}</p>
+                          </div>
+                          <div className="rounded-lg bg-slate-100 px-3 py-2">
+                            <p className="text-[11px] uppercase tracking-wide text-slate-500">Difference</p>
+                            <p className={`mt-1 text-sm font-medium ${diff > 0 ? 'text-red-700' : diff < 0 ? 'text-green-700' : 'text-slate-700'}`}>
+                              Rs {Math.abs(diff).toFixed(2)} {label}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <label className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                            Exact Paid
+                          </label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={actualDrafts[expense._id] ?? String(expense.actualAmount ?? 0)}
+                            onChange={(e) => handleActualAmountChange(expense._id, e.target.value)}
+                            className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+                          />
+                        </div>
+                        <button
+                          onClick={() => saveActualAmount(expense._id)}
+                          disabled={savingExpenseId === expense._id}
+                          className="mt-4 w-full bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 shadow-sm text-sm font-medium"
+                        >
+                          {savingExpenseId === expense._id ? 'Saving...' : 'Save'}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="hidden md:block overflow-x-auto">
                   <table className="min-w-full divide-y divide-slate-200">
                     <thead className="bg-slate-50">
                       <tr>
