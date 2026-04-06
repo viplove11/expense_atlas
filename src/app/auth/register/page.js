@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { UserPlus, ShieldCheck } from 'lucide-react';
+import { Loader2, UserPlus, ShieldCheck } from 'lucide-react';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -11,26 +11,33 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLoading) return;
     setError('');
     setSuccess('');
+    setIsLoading(true);
 
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      setSuccess('Account created successfully! Please sign in.');
-      setTimeout(() => router.push('/auth/signin'), 2000);
-    } else {
-      setError(data.error);
+      if (res.ok) {
+        setSuccess('Account created successfully! Please sign in.');
+        setTimeout(() => router.push('/auth/signin'), 2000);
+      } else {
+        setError(data.error);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,6 +64,7 @@ export default function Register() {
                   className="appearance-none relative block w-full"
                   placeholder="Full Name"
                   value={name}
+                  disabled={isLoading}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
@@ -69,6 +77,7 @@ export default function Register() {
                   className="appearance-none relative block w-full"
                   placeholder="Email address"
                   value={email}
+                  disabled={isLoading}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
@@ -81,6 +90,7 @@ export default function Register() {
                   className="appearance-none relative block w-full"
                   placeholder="Password"
                   value={password}
+                  disabled={isLoading}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
@@ -97,9 +107,17 @@ export default function Register() {
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-900 hover:bg-slate-800"
+                disabled={isLoading}
+                className="group relative w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Sign up
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  'Sign up'
+                )}
               </button>
             </div>
 

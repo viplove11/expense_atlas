@@ -4,26 +4,34 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LogIn, ShieldCheck } from 'lucide-react';
+import { Loader2, LogIn, ShieldCheck } from 'lucide-react';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
+    setError('');
+    setIsLoading(true);
 
-    if (result.error) {
-      setError('Invalid credentials');
-    } else {
-      router.push('/dashboard');
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('Invalid credentials');
+      } else {
+        router.push('/dashboard');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,6 +58,7 @@ export default function SignIn() {
                   className="appearance-none relative block w-full"
                   placeholder="Email address"
                   value={email}
+                  disabled={isLoading}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
@@ -62,6 +71,7 @@ export default function SignIn() {
                   className="appearance-none relative block w-full"
                   placeholder="Password"
                   value={password}
+                  disabled={isLoading}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
@@ -74,9 +84,17 @@ export default function SignIn() {
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-900 hover:bg-slate-800"
+                disabled={isLoading}
+                className="group relative w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Sign in
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign in'
+                )}
               </button>
             </div>
 
